@@ -1,6 +1,6 @@
 {
   "name": "countries",
-  "homepage": "https://mrredr.github.io/countries/#",
+  "homepage": "/countries/#",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
