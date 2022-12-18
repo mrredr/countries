@@ -12,32 +12,47 @@ export const Routing = () => {
       <Route
         path="/"
         element={
-          <RequireAuth>
+          <AuthRedirect>
             <CatalogPage />
-          </RequireAuth>
+          </AuthRedirect>
         }
       />
       <Route
         path="/details/:alphaCode"
         element={
-          <RequireAuth>
+          <AuthRedirect>
             <DetailsPage />
-          </RequireAuth>
+          </AuthRedirect>
         }
       />
-      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/login"
+        element={
+          <AuthRedirect redirectUrl="/" authRequired={false}>
+            <LoginPage />
+          </AuthRedirect>
+        }
+      />
       <Route path="*" element={<NotFoundLayout />} />
     </Routes>
   );
 };
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function AuthRedirect({
+  children,
+  redirectUrl = "/login",
+  authRequired = true,
+}: {
+  children?: JSX.Element;
+  redirectUrl?: string;
+  authRequired?: boolean;
+}) {
   const auth = useAppSelector(getAuthStateSelector);
   const location = useLocation();
 
-  if (auth === null) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if ((auth === null && authRequired) || (auth !== null && !authRequired)) {
+    return <Navigate to={redirectUrl} state={{ from: location }} replace />;
   }
 
-  return children;
+  return children ?? null;
 }
